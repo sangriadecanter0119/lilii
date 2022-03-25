@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !^/robots.txt$
+  RewriteCond %{REQUEST_URI} !^/404error.html$
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{ENV:HTTPS} !^on$
+  RewriteCond %{HTTP:X-SAKURA-FORWARDED-FOR} ^$
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
