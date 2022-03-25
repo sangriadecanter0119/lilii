@@ -76,9 +76,9 @@ class DATABASE_CONFIG {
 	var $product = array(
 		'driver' => 'mysql_log',
 		'persistent' => false,
-		'host' => 'mysql712.db.sakura.ne.jp',
-		'login' => 'liliicompany',
-		'password' => 'ocean1001',
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '12p12p12p3',
 		'database' => 'liliicompany_back_office',
 		'prefix' => '',
 	    'encoding' => 'utf8'
@@ -87,11 +87,11 @@ class DATABASE_CONFIG {
 	var $default = array(
 		'driver' => 'mysql_log',
 		'persistent' => false,
-		'host' => 'mysql712.db.sakura.ne.jp',
-  	        'login' => 'liliicompany',
-		'password' => 'ocean1001',
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '12p12p12p3',
 		'database' => 'liliicompany_back_office',
 		'prefix' => '',
-		'encoding' => 'utf8'
+	    'encoding' => 'utf8'
 	);
 }

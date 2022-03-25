@@ -307,7 +307,7 @@ class CustomersListController extends AppController
  function goToCustomerInfo($customer_id)
  {
  	$this->Session->write('customer_id',$customer_id);
-    $this->redirect('https://'.$_SERVER['HTTP_HOST'].'/admin/customer_info');
+    $this->redirect('http://'.$_SERVER['HTTP_HOST'].'/lilii/admin/customer_info');
  }
 
  /**

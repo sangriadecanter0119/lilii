@@ -6,15 +6,15 @@ class AppController extends Controller
 
   public function beforeFilter() {
     parent::beforeFilter();
-    // httpƒŠƒNƒGƒXƒg‚Ì‚Æ‚«‚ÉÀs‚·‚éƒƒ\ƒbƒh
-    $this->Security->blackHoleCallback = 'forceSecure';
-    // https‚ğ‹­§‚µ‚½‚¢ƒAƒNƒVƒ‡ƒ“
-    // requireSecureƒƒ\ƒbƒh‚Éˆø”‚ª‚È‚¢ê‡‚Í‘S‚Ä‚ÌƒAƒNƒVƒ‡ƒ“‚Åhttps‚ğ‹­§‚·‚é
-    $this->Security->requireSecure();
+    // httpï¿½ï¿½ï¿½Nï¿½Gï¿½Xï¿½gï¿½Ì‚Æ‚ï¿½ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½éƒï¿½\ï¿½bï¿½h
+    //$this->Security->blackHoleCallback = 'forceSecure';
+    // httpsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Nï¿½Vï¿½ï¿½ï¿½ï¿½
+    // requireSecureï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½Éˆï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Í‘Sï¿½Ä‚ÌƒAï¿½Nï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½httpsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //$this->Security->requireSecure();
   }
 
   public function forceSecure() {
-    $this->redirect("https://".env('SERVER_NAME').$this->here);
+    $this->redirect("http://".env('SERVER_NAME').$this->here);
   }
 }
 

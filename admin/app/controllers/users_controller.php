@@ -11,7 +11,7 @@ class UsersController extends AppController
  function index()
  {
     //$this->redirect(array('action' => 'login'));
-    $this->redirect('https://'.$_SERVER['HTTP_HOST'].'/admin/users/login');
+    $this->redirect('http://'.$_SERVER['HTTP_HOST'].'/lilii/admin/users/login');
  }
 
  /**
@@ -46,7 +46,7 @@ class UsersController extends AppController
  {
  	$this->Session->setFlash(array('auth','ログアウトしました。'));
     $this->Auth->logout();
-    $this->redirect('https://'.$_SERVER['HTTP_HOST'].'/admin/users/login');
+    $this->redirect('http://'.$_SERVER['HTTP_HOST'].'/lilii/admin/users/login');
  }
 
  /**
@@ -209,7 +209,7 @@ class UsersController extends AppController
  {
  	$this->Auth->loginError = "ログイン情報に誤りがあります。";
  	//$this->Auth->loginRedirect = array('controller' => 'Users',  'action' => 'loginStart');
- 	$this->Auth->loginRedirect = 'https://'.$_SERVER['HTTP_HOST'].'/admin/users/loginStart';
+ 	$this->Auth->loginRedirect = 'http://'.$_SERVER['HTTP_HOST'].'/lilii/admin/users/loginStart';
 
   //初回ログイン用
   //$this->Auth->allow('add');
@@ -230,7 +230,7 @@ class UsersController extends AppController
 
  	//初期画面へ移動
  	//$this->redirect(array('controller' => 'customersList',  'action' => 'index'));
- 	$this->redirect('https://'.$_SERVER['HTTP_HOST'].'/admin/customersList');
+ 	$this->redirect('http://'.$_SERVER['HTTP_HOST'].'/lilii/admin/customersList');
  }
 
 }

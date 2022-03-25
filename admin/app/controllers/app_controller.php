@@ -13,7 +13,7 @@ class AppController extends Controller {
             //  $this->set("server_mode",SM_DEVELOPMENT);
             //}
 
-		$this->Auth->loginAction = 'https://'.$_SERVER['HTTP_HOST'].'/admin/users/login';
+		$this->Auth->loginAction = 'http://'.$_SERVER['HTTP_HOST'].'/lilii/admin/users/login';
 	}
 }
 ?>
