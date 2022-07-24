@@ -218,7 +218,7 @@ $html.= '<div><table border="0" cellspacing="0" cellpadding="2">
     {
        if($estimate_dtl[$i]['EstimateDtlTrnView']['del_kbn']==false){
          $html .= '<tr><td class="border">'                 . $estimate_dtl[$i]['EstimateDtlTrnView']['goods_ctg_nm']            . '</td>'.
-                      '<td class="border">'                 . '【'. $estimate_dtl[$i]['EstimateDtlTrnView']['goods_kbn_nm'].'】'.'<br />&nbsp;&nbsp;'.str_replace ("\n", "<br />&nbsp;&nbsp;", $estimate_dtl[$i]['EstimateDtlTrnView']['sales_goods_nm']).'</td>'.
+                      '<td class="border">'                 . '《'. $estimate_dtl[$i]['EstimateDtlTrnView']['goods_kbn_nm'].'》'.'<br />'.str_replace ("\n", "<br />", $estimate_dtl[$i]['EstimateDtlTrnView']['sales_goods_nm']).'</td>'.
                       '<td align="right" class="border">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'])        . '</td>'.
                       '<td align="right" class="border">'   . (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']                       . '</td>'.
                       '<td align="right" class="border">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'] * (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']) . '</td></tr>';
