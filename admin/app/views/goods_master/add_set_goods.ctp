@@ -428,11 +428,11 @@ JSPROG
              <td><input type="text" name="data[GoodsMst][cost]" id="set_goods_cost" class="inputdisable inputnumeric" value="" readonly /></td>
           </tr>
           <tr>
-             <th>HIシェア(%)<span class="necessary">必須</span></th>
+             <th>LCシェア(%)<span class="necessary">必須</span></th>
              <td><input type="text" name="data[GoodsMst][aw_share]" id="aw_share" class="validate[required,custom[number],max[100],maxSize[5],rateSumUp[rw_share]] inputnumeric" value="" /></td>
           </tr>
           <tr>
-             <th>RWシェア(%)<span class="necessary">必須</span></th>
+             <th>WDシェア(%)<span class="necessary">必須</span></th>
              <td><input type="text" name="data[GoodsMst][rw_share]" id="rw_share" class="validate[required,custom[number],max[100],maxSize[5],rateSumUp[aw_share]] inputnumeric" value="" /></td>
           </tr>
           <tr>

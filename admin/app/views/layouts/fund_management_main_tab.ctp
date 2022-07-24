@@ -66,7 +66,7 @@
 
 	<table class="customertype" cellspacing="0">
       <tr>
-          <!-- <td><a class="<?php echo $sub_menu_bank; ?>"       href="<?php echo $html->url('/bankManagement') ?>">入金管理一覧</a></td> -->
+          <td><a class="<?php echo $sub_menu_bank; ?>"       href="<?php echo $html->url('/bankManagement') ?>">入金管理一覧</a></td> 
           <?php
 	        if($user['User']['user_kbn_id'] == UC_ADMIN){
 	          echo "<td><a class='{$sub_menu_sales}'      href='{$html->url('/salesManagement')}'>売上管理一覧</a></td>";

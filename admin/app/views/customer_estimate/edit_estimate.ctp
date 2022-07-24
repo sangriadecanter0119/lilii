@@ -1267,7 +1267,8 @@ $(function(){
 
     /* 見積書発行の事前チェック処理 */
     $(".export_estimate").click(function(){
-       var url = $(this).attr("href") + "/" + $("#credit_amount").text().split(",").join("") + "/dummy/" + $("#pdf_note").val();
+       //var url = $(this).attr("href") + "/" + $("#credit_amount").text().split(",").join("") + "/dummy/" + encodeURI($("#pdf_note").val());
+         var url = $(this).attr("href") + "/" + $("#credit_amount").text().split(",").join("") + "/dummy/";
        $(this).attr("href",url);
     });
 
@@ -2201,20 +2202,22 @@ JSPROG
 <ul class="operate" style="margin-bottom: :10px;">
 	<li><a href="<?php echo $html->url('.') ?>">戻る</a></li>
 	<li><a href="<?php echo $html->url('export/excel').'/'.$data[0]['EstimateDtlTrnView']['estimate_id'] ?>" id="export_estimate_excel">EXCEL出力</a></li>
-
+    
+    <!--
 	<?php
-      if($customer_status < CS_CONTRACTED){
+	  if($customer_status < CS_CONTRACTED){
    	       echo "<li><a href='".$html->url('export/credit_yen').'/'.$data[0]['EstimateDtlTrnView']['estimate_id']."' class='export_credit'>内金請求書出力</a></li>";
-	  }
+	  }	 
    	?>
+   	-->
 
-	<li><a href="<?php echo $html->url('export/estimate_yen').'/'.$data[0]['EstimateDtlTrnView']['estimate_id'] ?>"  class="export_estimate">見積書出力【円ベース】</a></li>
-	<li><a href="<?php echo $html->url('export/estimate_dollar').'/'.$data[0]['EstimateDtlTrnView']['estimate_id'] ?>"  class="export_estimate">見積書出力【ドルベース】</a></li>
+	<li><a href="<?php echo $html->url('export/estimate_yen').'/'.$data[0]['EstimateDtlTrnView']['estimate_id'] ?>"  class="export_estimate">見積書出力</a></li>
+	<!--<li><a href="<?php echo $html->url('export/estimate_dollar').'/'.$data[0]['EstimateDtlTrnView']['estimate_id'] ?>"  class="export_estimate">見積書出力【ドルベース】</a></li>-->
 	<?php
 	   if($data[0]['EstimateDtlTrnView']['adopt_flg'] == ESTIMATE_ADOPTED){
          if($customer_status == CS_CONTRACTED || $customer_status == CS_INVOICED || $customer_status == CS_UNPAIED || $customer_status == CS_PAIED){
-   	       echo "<li><a href='".$html->url('export/invoice_yen').'/'.$data[0]['EstimateDtlTrnView']['estimate_id']."' id='export_invoice' class='export_invoice'>請求書出力【円ベース】</a></li>";
-   	       echo "<li><a href='".$html->url('export/invoice_dollar').'/'.$data[0]['EstimateDtlTrnView']['estimate_id']."' id='export_invoice_dollar' class='export_invoice'>請求書出力【ドルベース】</a></li>";
+   	       echo "<li><a href='".$html->url('export/invoice_yen').'/'.$data[0]['EstimateDtlTrnView']['estimate_id']."' id='export_invoice' class='export_invoice'>請求書出力</a></li>";
+   	       //echo "<li><a href='".$html->url('export/invoice_dollar').'/'.$data[0]['EstimateDtlTrnView']['estimate_id']."' id='export_invoice_dollar' class='export_invoice'>請求書出力【ドルベース】</a></li>";
 	     }
 	   }
    	?>
@@ -2249,7 +2252,7 @@ JSPROG
     <td><label for="data[EstimateTrn][cost_exchange_rate]"> 原価為替レート: </label></td>
     <!-- <td><label id="costExchangeRate"> <?php echo $env_data['EnvMst']['cost_exchange_rate'] ?> </label></td> -->
     <td><input id="cost_exchange_update_rate" type="text" style="width:80px;margin-right:10px;" /><input id="cost_exchange_rate_update_button" type="button"  value="変換" /></td>
-    <td style="padding-left:30px">注意事項:</td>
+    <td style="padding-left:30px">備考:</td>
     <td><textarea id="pdf_note" class="small-inputcomment " name="data[EstimateTrn][pdf_note]" style="height:20px;" ><?php echo $data[0]["EstimateDtlTrnView"]["pdf_note"] ?></textarea></td>
     <td style="padding-left:30px">見積概要:</td>
     <td>
@@ -2315,10 +2318,10 @@ JSPROG
         <th class="dollar">総原価<?php echo $html->image('dollar.png')?></th>
         <th class="dollar">利益<?php echo $html->image('dollar.png')?></th>
         <th class="dollar short">利益率<?php echo $html->image('dollar.png')?></th>
-        <th class="dollar">HI<?php echo $html->image('dollar.png')?></th>
-        <th class="dollar">RW<?php echo $html->image('dollar.png')?></th>
-        <th>HI/SH</th>
-        <th>RW/SH</th>
+        <th class="dollar">LC<?php echo $html->image('dollar.png')?></th>
+        <th class="dollar">WD<?php echo $html->image('dollar.png')?></th>
+        <th>LC/SH</th>
+        <th>WD/SH</th>
         <th>販売為替レート</th>
 	    <th>原価為替レート</th>
         <th>支払区分</th>
@@ -2807,6 +2810,120 @@ echo    "<!-- 総原価 (外貨)-->".
             <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
+       <!-- 追加衣装代など SATRT -->
+          <tr class="nodrag nodrop">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <?php  if($data[0]['EstimateDtlTrnView']['adopt_flg'] == ESTIMATE_ADOPTED){ echo "<td>&nbsp;</td>";} ?>
+
+            <td align="right"><input type="text" id="additional_goods1"  class="" name="data[EstimateTrn][additional_goods_nm1]"
+                                     value="<?php echo $data[0]['EstimateDtlTrnView']['additional_goods_nm1'] ?>" /></td>
+            <td><input type="text" id="additional_goods_nm1" class="inputnumeric" name="data[EstimateTrn][additional_goods_price1]" value="<?php echo $data[0]['EstimateDtlTrnView']['additional_goods_price1'] ?>" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+
+            <td class="yen short" id="total_additional_goods_price1" >&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen" id="total_aw_with_additional1">&nbsp;</td>
+            <td class="yen" id="total_rw_with_additional1">&nbsp;</td>
+
+            <td class="dolla" id="total_amount_foreign_price_with_additonal1" >&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar" id="total_foreign_aw_with_additional1">&nbsp;</td>
+            <td class="dollar" id="total_foreign_rw_with_additional1">&nbsp;</td>
+
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+         <tr class="nodrag nodrop">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <?php  if($data[0]['EstimateDtlTrnView']['adopt_flg'] == ESTIMATE_ADOPTED){ echo "<td>&nbsp;</td>";} ?>
+
+            <td align="right"><input type="text" id="additional_goods2"  class="" name="data[EstimateTrn][additional_goods_nm2]"
+                                     value="<?php echo $data[0]['EstimateDtlTrnView']['additional_goods_nm2'] ?>" /></td>
+            <td><input type="text" id="additional_goods_nm2" class="inputnumeric" name="data[EstimateTrn][additional_goods_price2]" value="<?php echo $data[0]['EstimateDtlTrnView']['additional_goods_price2'] ?>" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+
+            <td class="yen short" id="total_additional_goods_price2" >&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen" id="total_aw_with_additional2">&nbsp;</td>
+            <td class="yen" id="total_rw_with_additional2">&nbsp;</td>
+
+            <td class="dolla" id="total_amount_foreign_price_with_additonal2" >&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar" id="total_foreign_aw_with_additional2">&nbsp;</td>
+            <td class="dollar" id="total_foreign_rw_with_additional2">&nbsp;</td>
+
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+         <tr class="nodrag nodrop">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <?php  if($data[0]['EstimateDtlTrnView']['adopt_flg'] == ESTIMATE_ADOPTED){ echo "<td>&nbsp;</td>";} ?>
+
+            <td align="right"><input type="text" id="additional_goods3"  class="" name="data[EstimateTrn][additional_goods_nm3]"
+                                     value="<?php echo $data[0]['EstimateDtlTrnView']['additional_goods_nm3'] ?>" /></td>
+            <td><input type="text" id="additional_goods_nm3" class="inputnumeric" name="data[EstimateTrn][additional_goods_price3]" value="<?php echo $data[0]['EstimateDtlTrnView']['additional_goods_price3'] ?>" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+
+            <td class="yen short" id="total_additional_goods_price3" >&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen" id="total_aw_with_additional3">&nbsp;</td>
+            <td class="yen" id="total_rw_with_additional3">&nbsp;</td>
+
+            <td class="dolla" id="total_amount_foreign_price_with_additonal3" >&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar" id="total_foreign_aw_with_additional3">&nbsp;</td>
+            <td class="dollar" id="total_foreign_rw_with_additional3">&nbsp;</td>
+
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <!-- 追加衣装代など END -->
+        
         <tr class="nodrag nodrop">
             <td>&nbsp;</td>
             <td>&nbsp;</td>

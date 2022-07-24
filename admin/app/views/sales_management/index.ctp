@@ -178,14 +178,14 @@ JSPROG
 	    <th style="text-align:right">全体額<?php echo $html->image('dollar.png')?></th>
 	    <th style="text-align:right">クレジット払い額<?php echo $html->image('dollar.png')?></th>
 	    <th style="text-align:right">アレンジメントフィー<?php echo $html->image('dollar.png')?></th>
-	    <th id="hi_header_en" style="text-align:right">HI取り分<?php echo $html->image('dollar.png')?></th>
-  	    <th style="text-align:right">RW取り分<?php echo $html->image('dollar.png')?></th>
+	    <th id="hi_header_en" style="text-align:right">LC取り分<?php echo $html->image('dollar.png')?></th>
+  	    <th style="text-align:right">WD取り分<?php echo $html->image('dollar.png')?></th>
 	    <th style="text-align:right">税金<?php echo $html->image('dollar.png')?></th>
 	    <th style="text-align:right">送金税金<?php echo $html->image('dollar.png')?></th>
-	    <th style="text-align:right">RW割引<?php echo $html->image('dollar.png')?></th>
+	    <th style="text-align:right">WD割引<?php echo $html->image('dollar.png')?></th>
 	    <th style="text-align:right">全体割引<?php echo $html->image('dollar.png')?></th>
-        <th style="text-align:right">RW Total<?php echo $html->image('dollar.png')?></th>
-        <th style="text-align:right">RW Total / 売上<?php echo $html->image('dollar.png')?></th>
+        <th style="text-align:right">WD Total<?php echo $html->image('dollar.png')?></th>
+        <th style="text-align:right">WD Total / 売上<?php echo $html->image('dollar.png')?></th>
         <th style="text-align:right">粗利 Total<?php echo $html->image('dollar.png')?></th>
         <th style="text-align:right">粗利 Total / 売上<?php echo $html->image('dollar.png')?></th>
         <th></th>
@@ -298,14 +298,14 @@ JSPROG
 	    <th style="text-align:right">全体額<?php echo $html->image('yen.png')?></th>
 	    <th style="text-align:right">クレジット払い額<?php echo $html->image('yen.png')?></th>
 	    <th style="text-align:right">アレンジメントフィー<?php echo $html->image('yen.png')?></th>
-	    <th id='hi_header_jp' style="text-align:right">HI取り分<?php echo $html->image('yen.png')?></th>
-  	    <th style="text-align:right">RW取り分<?php echo $html->image('yen.png')?></th>
+	    <th id='hi_header_jp' style="text-align:right">LC取り分<?php echo $html->image('yen.png')?></th>
+  	    <th style="text-align:right">WD取り分<?php echo $html->image('yen.png')?></th>
 	    <th style="text-align:right">税金<?php echo $html->image('yen.png')?></th>
 	    <th style="text-align:right">送金税金<?php echo $html->image('yen.png')?></th>
-	    <th style="text-align:right">RW割引<?php echo $html->image('yen.png')?></th>
+	    <th style="text-align:right">WD割引<?php echo $html->image('yen.png')?></th>
 	    <th style="text-align:right">全体割引<?php echo $html->image('yen.png')?></th>
-        <th style="text-align:right">RW Total<?php echo $html->image('yen.png')?></th>
-        <th style="text-align:right">RW Total / 売上<?php echo $html->image('yen.png')?></th>
+        <th style="text-align:right">WD Total<?php echo $html->image('yen.png')?></th>
+        <th style="text-align:right">WD Total / 売上<?php echo $html->image('yen.png')?></th>
         <th style="text-align:right">粗利 Total<?php echo $html->image('yen.png')?></th>
         <th style="text-align:right">粗利 Total / 売上<?php echo $html->image('yen.png')?></th>
         <th></th>

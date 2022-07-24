@@ -63,78 +63,117 @@ $discountB = $estimate_header[0]['EstimateTrnView']['discount'];
 $total    = $estimate_header[0]['EstimateTrnView']['total_yen'];
 $is_discounted = ($discountA <= 0 && $discountB <= 0) ? false : true;
 
+$opt1    = $estimate_header[0]['EstimateTrnView']['additional_goods_nm1'];
+$opt_p1  = $estimate_header[0]['EstimateTrnView']['additional_goods_price1'];
+$opt2    = $estimate_header[0]['EstimateTrnView']['additional_goods_nm2'];
+$opt_p2  = $estimate_header[0]['EstimateTrnView']['additional_goods_price2'];
+$opt3    = $estimate_header[0]['EstimateTrnView']['additional_goods_nm3'];
+$opt_p3  = $estimate_header[0]['EstimateTrnView']['additional_goods_price3'];
+
+
 if(empty($estimate_header[0]['EstimateTrnView']['upd_dt'])){
-$d = date('Y/m/d', strtotime($estimate_header[0]['EstimateTrnView']['reg_dt']));
+$d = date('Y年m月d日', strtotime($estimate_header[0]['EstimateTrnView']['reg_dt']));
 }else{
-$d = date('Y/m/d', strtotime($estimate_header[0]['EstimateTrnView']['upd_dt']));
+$d = date('Y年m月d日', strtotime($estimate_header[0]['EstimateTrnView']['upd_dt']));
 }
 
 //ステータスが仮約定以前の場合は挙式予定日を、それ以外は挙式日を表示する
 if($customer['CustomerMstView']['status_id'] < CS_CONTRACTING){
-  $wedding_dt = $common->evalForShortDate($customer['CustomerMstView']['wedding_planned_dt']);
+  $wedding_dt = $common->evalSpaceForShortDateKanji($customer['CustomerMstView']['wedding_planned_dt']);
 }else{
-  $wedding_dt= $common->evalForShortDate($customer['CustomerMstView']['wedding_dt']);
+  $wedding_dt= $common->evalSpaceForShortDateKanji($customer['CustomerMstView']['wedding_dt']);
 }
 
 if($customer['CustomerMstView']['status_id'] < CS_CONTRACTING){
-  $wedding_place= $common->evalNbsp($customer['CustomerMstView']['wedding_planned_place']);
+  $wedding_place= $customer['CustomerMstView']['wedding_planned_place'];
 }else{
-  $wedding_place= $common->evalNbsp($customer['CustomerMstView']['wedding_place']);
+  $wedding_place= $customer['CustomerMstView']['wedding_place'];
 }
 
 if($customer['CustomerMstView']['status_id'] < CS_CONTRACTING){
-  $wedding_time= $common->evalNbsp($customer['CustomerMstView']['wedding_planned_time']);
+  $wedding_time= $common->evalSpaceForTimeKanji($customer['CustomerMstView']['wedding_planned_time']);
 }else{
-  $wedding_time= $common->evalNbsp($customer['CustomerMstView']['wedding_time']);
+  $wedding_time= $common->evalSpaceForTimeKanji($customer['CustomerMstView']['wedding_time']);
 }
 
-$html = '<div><table border="0" bgcolor="pink">
-                  <tr>
-                     <td rowspan="2" align="left"><font size="14"><strong>   ESTIMATION</strong></font></td><td></td>
-                  </tr>
-                  <tr>
-                     <td align="right">' .$d.'</td>
-                  </tr>
+$html = '<style>.border{ border:1px solid black;}</style>';
+
+$html .= '<div><table border="0">
+                 <tr>
+                     <td align="left" style="border-bottom:3px solid black"><img src="./images/title_wd.png" border="0" width="80px" height="34px" /></td>
+                 </tr>  
+                 <tr>
+                     <td style="border-bottom:1px solid black;height:1px">&nbsp;</td>
+                 </tr>               
               </table>
               <br />
               <table border="0">
                   <tr>
-                     <td align="left"><font size="14">'.$groom_nm.'</font>&nbsp;&nbsp;
-                                      <font size="14">'.$bride_nm.'</font>
+                     <td>&nbsp;</td>
+                     <td align="right">' .$d.'</td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td>&nbsp;</td>
+                  </tr>
+                   <tr>
+                     <td>&nbsp;</td>
+                     <td align="right">株式会社ミケランジェロ</td>
+                  </tr>
+                  <tr>
+                     <td align="left">
+                       <span style="text-decoration:underline">
+                          <font size="12">'.$groom_nm.'</font>&nbsp;&nbsp;
+                          <font size="12">'.$bride_nm.'</font>
+                       </span>
                      </td>
-                     <td align="right"><img src="./images/title.png" border="0" width="100px" height="17px" /></td>
+                     <td align="right">ホワイトドア</td>
                   </tr>
                   <tr>
                      <td align="left">&nbsp;</td>
-                     <td align="right">Tel  03-3746-0004 Fax 03-3746-0048 </td>
+                     <td align="right">TEL：03-5363-2442</td>
                   </tr>
                   <tr>
-                     <td align="left">下記にお見積もりを致しましたので、ご査収くださいませ。</td>
-                     <td align="right">info@realweddings.jp</td>
-                  </tr>';
-
-         if($common->hasValue($wedding_dt) and $common->hasValue($wedding_place)){
-            $html.='<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                    <tr><td>挙式日時：<span style="text-decoration:underline">'.$wedding_dt.' '.$wedding_time.'</span></td><td align="left">会場：<span style="text-decoration:underline">'.$wedding_place.'</span></td></tr>';
-
-         }elseif($common->hasValue($wedding_dt)){
-             $html.='<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                     <tr><td>挙式日時：<span style="text-decoration:underline">'.$wedding_dt.' '.$wedding_time.'</span></td><td align="left">会場：</td></tr>';
-
-         }elseif($common->hasValue($wedding_place)){
-             $html.='<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                     <tr><td>挙式日時：</td><td align="left">会場：<span style="text-decoration:underline">'.$wedding_place.'</span></td></tr>';
-         }
+                     <td align="left">&nbsp;</td>
+                     <td align="right">FAX：03-5363-1416</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" align="center"><font size="14"><strong>お見積書</strong></font></td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" align="center">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td colspan="2" align="left">このたびはホワイトドアをご利用いただき誠にありがとうございます。</td>
+                  </tr>
+                   <tr>
+                     <td colspan="2" align="left">ご依頼のございましたお見積もりにつきまして、下記のとおりご案内申し上げます。</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2">&nbsp;</td>
+                  </tr>
+                  <tr>';
+                  
+                       if($is_discounted){
+                    	 $html .='<td colspan="2" align="left"><font size="14" style="text-decoration:underline">お見積金額：￥'.number_format((($subtotal + $tax + $service + $opt_p1 + $opt_p2 + $opt_p3)-$discountA-$discountB)- $credit_amount).'  (税込)</font></td>';
+                       }else{
+	                     $html .='<td colspan="2" align="left"><font size="14" style="text-decoration:underline">お見積金額：￥'.number_format(($subtotal + $tax + $service + $opt_p1 + $opt_p2 + $opt_p3) - $credit_amount).'  (税込)</font></td>';
+                       }
+                 $html .='</tr>';
+      
+                 $html.='<tr><td colspan="2">&nbsp;</td></tr>
+                         <tr><td colspan="2" align="left">挙式日時：'.$wedding_dt.' '.$wedding_time.'</td></tr>
+                         <tr><td colspan="2" align="left">挙式場名：'.$wedding_place.'</td></tr>';
 
 $html.= '</table></div>';
 
-$html.= '<div><table border="1" cellspacing="0" cellpadding="2">
+$html.= '<div><table border="0" cellspacing="0" cellpadding="2">
 	       <tr align="center">
-	        <th width="100">項目</th>
-		    <th width="310">内容</th>
-		    <th width="50">単価</th>
-		    <th width="25">個数</th>
-		    <th width="55">計</th>
+	        <th width="100" class="border">項目</th>
+		    <th width="310" class="border">内容</th>
+		    <th width="50"  class="border">単価</th>
+		    <th width="25"  class="border">数量</th>
+		    <th width="55"  class="border">金額</th>
 	      </tr>';
 
     /* 同じ商品コードは１つの注文に束ねる  */
@@ -164,68 +203,73 @@ $html.= '<div><table border="1" cellspacing="0" cellpadding="2">
     for($i=0;$i < count($estimate_dtl);$i++)
     {
        if($estimate_dtl[$i]['EstimateDtlTrnView']['del_kbn']==false){
-         $html .= '<tr><td>'                 . $estimate_dtl[$i]['EstimateDtlTrnView']['goods_ctg_nm']            . '</td>'.
-                      '<td>'                 . '【'. $estimate_dtl[$i]['EstimateDtlTrnView']['goods_kbn_nm'].'】'.'<br />&nbsp;&nbsp;'.str_replace ("\n", "<br />&nbsp;&nbsp;", $estimate_dtl[$i]['EstimateDtlTrnView']['sales_goods_nm']).'</td>'.
-                      '<td align="right">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'])        . '</td>'.
-                      '<td align="right">'   . (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']                       . '</td>'.
-                      '<td align="right">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'] * (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']) . '</td></tr>';
+         $html .= '<tr><td class="border">'                 . $estimate_dtl[$i]['EstimateDtlTrnView']['goods_ctg_nm']            . '</td>'.
+                      '<td class="border">'                 . '【'. $estimate_dtl[$i]['EstimateDtlTrnView']['goods_kbn_nm'].'】'.'<br />&nbsp;&nbsp;'.str_replace ("\n", "<br />&nbsp;&nbsp;", $estimate_dtl[$i]['EstimateDtlTrnView']['sales_goods_nm']).'</td>'.
+                      '<td align="right" class="border">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'])        . '</td>'.
+                      '<td align="right" class="border">'   . (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']                       . '</td>'.
+                      '<td align="right" class="border">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'] * (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']) . '</td></tr>';
        }
     }
 
-$html .= '<tr><td colspan="4" align="right">小計</td><td align="right">￥' . number_format($subtotal) . '</td></tr>' .
-         '<tr><td colspan="4" align="right">ハワイ州税</td><td align="right">￥'. number_format($tax) .'</td></tr>' .
-         '<tr><td colspan="4" align="right">'.$estimate_dtl[0]['EstimateDtlTrnView']['service_rate_nm'].'</td><td align="right">￥'. number_format($service) .'</td></tr>';
-
-        //割引率又は割引額が適用されている場合は小計を表示する
-         if($is_discounted){
-         	$html .= '<tr><td colspan="4" align="right">小計</td><td align="right">￥' . number_format($subtotal + $tax +$service) . '</td></tr>';
+         //小計は表示しない
+         //'<tr><td colspan="4" align="right" class="border">小計</td><td align="right" class="border">￥' . number_format($subtotal) . '</td></tr>' .
+$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">ハワイ州税</td><td align="right" class="border">￥'. number_format($tax) .'</td></tr>' .
+         '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">'.$estimate_dtl[0]['EstimateDtlTrnView']['service_rate_nm'].'</td><td align="right" class="border">￥'. number_format($service) .'</td></tr>';
+  
+         //割引率又は割引額、追加商品が適用されている場合は小計を表示する
+         if($is_discounted || !empty($opt1) || !empty($opt2) || !empty($opt3)){
+         	$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">小計</td><td align="right" class="border">￥' . number_format($subtotal + $tax +$service) . '</td></tr>';
          	//割引率が適用されている
          	if($discountA > 0){
-         		$html .= '<tr><td colspan="4" align="right">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_rate_nm'] .'['. $discount_rate .'%]</td><td align="right">(￥' .number_format($discountA) . ')</td></tr>';
+         		$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_rate_nm'] .'['. $discount_rate .'%]</td><td align="right" class="border">(￥' .number_format($discountA) . ')</td></tr>';
          	}
          	//割引額が適用されている
          	if($discountB > 0){
-         		$html .='<tr><td colspan="4" align="right">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_nm'].'</td><td align="right">(￥' .number_format($discountB) . ')</td></tr>' ;
+         		$html .='<tr><td colspan="2"></td><td colspan="2" align="right" class="border">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_nm'].'</td><td align="right" class="border">(￥' .number_format($discountB) . ')</td></tr>' ;
          	}
-         	$html .= '<tr><td colspan="4" align="right">合計</td><td align="right">￥' . number_format(($subtotal + $tax +$service)-$discountA-$discountB) . '</td></tr>';
+         	//追加商品が適用されている
+         	if(!empty($opt1)){ $html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">'.$opt1.'</td><td align="right" class="border">￥' . number_format($opt_p1) . '</td></tr>';}
+            if(!empty($opt2)){ $html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">'.$opt2.'</td><td align="right" class="border">￥' . number_format($opt_p2) . '</td></tr>';}
+            if(!empty($opt3)){ $html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">'.$opt3.'</td><td align="right" class="border">￥' . number_format($opt_p3) . '</td></tr>';}
+            
+         	$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">合計</td><td align="right" class="border">￥' . number_format(($subtotal + $tax +$service + $opt_p1 + $opt_p2 + $opt_p3)-$discountA-$discountB) . '</td></tr>';
             if($credit_amount > 0){
-          		$html .= '<tr><td colspan="4" align="right">ご入金金額</td><td align="right">(￥' . number_format($credit_amount) . ')</td></tr>'.
-          		         '<tr><td colspan="4" align="right">合計</td><td align="right">￥' . number_format((($subtotal + $tax + $service)-$discountA-$discountB)- $credit_amount) . '</td></tr>' ;
+          		$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">ご入金金額</td><td align="right" class="border">(￥' . number_format($credit_amount) . ')</td></tr>'.
+          		         '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">合計</td><td align="right" class="border">￥' . number_format((($subtotal + $tax + $service + $opt_p1 + $opt_p2 + $opt_p3)-$discountA-$discountB)- $credit_amount) . '</td></tr>' ;
           	}
 
          }else{
-         	$html .= '<tr><td colspan="4" align="right">合計</td><td align="right">￥' . number_format($subtotal + $tax +$service) . '</td></tr>';
+         	$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">合計</td><td align="right" class="border">￥' . number_format($subtotal + $tax +$service) . '</td></tr>';
          	if($credit_amount > 0){
-          		$html .= '<tr><td colspan="4" align="right">ご入金金額</td><td align="right">(￥' . number_format($credit_amount) . ')</td></tr>'.
-            	         '<tr><td colspan="4" align="right">お見積金額合計</td><td align="right">￥' . number_format(($subtotal + $tax + $service) - $credit_amount) . '</td></tr>';
+          		$html .= '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">ご入金金額</td><td align="right" class="border">(￥' . number_format($credit_amount) . ')</td></tr>'.
+            	         '<tr><td colspan="2"></td><td colspan="2" align="right" class="border">お見積金額合計</td><td align="right" class="border">￥' . number_format(($subtotal + $tax + $service) - $credit_amount) . '</td></tr>';
           	}
-         }
+         }     
+         
 
-$html .=  '</table>';
+$html .=  '</table></div>';
 
-/* 注意事項 */
-$html .=  '<table border="0" cellspacing="0" cellpadding="2"><tr><td>'.nl2br($estimate_dtl[0]['EstimateDtlTrnView']['pdf_note']).'</td></tr></table></div>';
+/* 備考:見積画面の文言 */
+if(!empty($estimate_dtl[0]['EstimateDtlTrnView']['pdf_note'])){
+$html .=  '<div><table border="0" cellspacing="0" cellpadding="2"><tr><td>【備考】</td></tr><tr><td>'.nl2br($estimate_dtl[0]['EstimateDtlTrnView']['pdf_note']).'</td></tr></table></div>';
+}
 
-/* 補足説明 */
-$html .= '<div>';
+/* 注意事項:帳票管理画面の文言*/
+$html .= '<div><table border="0" cellspacing="0" cellpadding="2"><tr><td>【注意事項】</td></tr>';
 $note = explode("\n", $report[0]['ReportMst']['note']);
 for($i=0; $i < count($note);$i++){
-	//一番最後の文章だけフォントサイズを大きくする
-	if(strpos($note[$i],"上記は")){
-		$html .= '<font size="12">'.$note[$i].'</font><br />';
-	}else{
-		$html .= $note[$i].'<br />';
-	}
+	$html .= '<tr><td>'.$note[$i].'</td></tr>';
 }
-$html .= '</div>';
+$html .= '</table></div>';
 
-/* フッター */
+/* フッター:帳票管理画面の文言 */
+/*
 $html .= '<div>
                <table border="0" bgcolor="pink">
                  <tr align="center"><td><font size="10">www.realweddings.jp</font></td></tr>
                </table>
           </div>';
-
+*/
 $obj->writeHTML($html, true, 0, true, 0);
 
 //改行

@@ -74,12 +74,13 @@
           rowList: [10, 20, 30, 40, 50],
           loadonce: true,
           multiselect: true,
+          /* 履歴表示をやめて、最新改定のみ表示
           grouping:true,
    	      groupingView : {
    		      groupField : ['Dummy'],
    		      groupColumnShow : [false],
    		      groupCollapse : true
-   	      },
+   	      },*/
           emptyrecords: "NO RECORDS HERE",
           viewrecords: true,
           imgpath: 'themes/basic/images',
@@ -87,6 +88,8 @@
           height: '325',
           //rownumbers: true
       });
+      //最新改定のみ表示するため、Dummy列を非表示にする
+      $('#goods_list').jqGrid('hideCol', 'Dummy');
 
       $("#goods_list")
       .navGrid('#goods_list_pager',{refresh:false,edit:false,add:false,del:false,search:false})

@@ -1,4 +1,6 @@
 <?php
+set_time_limit(600);
+
 //====================================================+
 // File name   :
 // Begin       :
@@ -30,7 +32,6 @@ $obj->setPrintFooter( false );
 //set auto page breaks
 //$obj->SetAutoPageBreak(false, PDF_MARGIN_BOTTOM);
 
-
 /**
  * 日本語フォントを指定
  * 引数１：フォント名
@@ -51,13 +52,6 @@ if($estimate_header[0]['EstimateTrnView']['brdls_kj'].$estimate_header[0]['Estim
 	$bride_nm = $estimate_header[0]['EstimateTrnView']['brdls_kj'].$estimate_header[0]['EstimateTrnView']['brdfs_kj'].'様  ';
 }
 
-/* 判子 */
-$img_x = 185;
-$img_y = 34;
-$img_w = 15;
-$img_h = 15;
-$obj->Image("./images/hanko.png",$img_x,$img_y,$img_w,$img_h);
-
 $tax_rate = $estimate_header[0]['EstimateTrnView']['hawaii_tax_rate'] * 100;
 $tax      = round($estimate_header[0]['EstimateTrnView']['yen_tax']);
 $service  = round($estimate_header[0]['EstimateTrnView']['service_yen_fee']);
@@ -69,64 +63,134 @@ $discountB = $estimate_header[0]['EstimateTrnView']['discount'];
 $total    = $estimate_header[0]['EstimateTrnView']['total_yen'];
 $is_discounted = ($discountA <= 0 && $discountB <= 0) ? false : true;
 
-/* ヘッダ */
-$html = '<div>
-            <table border="0" bgcolor="#CCFFCC" color="black">
-              <tr><td rowspan="2" align="left"><font size="14"><strong>   INVOICE</strong></font></td><td></td></tr>
-              <tr><td align="right">' . date('Y/m/j') .'</td></tr>
-            </table>
-        </div>';
+$opt1    = $estimate_header[0]['EstimateTrnView']['additional_goods_nm1'];
+$opt_p1  = $estimate_header[0]['EstimateTrnView']['additional_goods_price1'];
+$opt2    = $estimate_header[0]['EstimateTrnView']['additional_goods_nm2'];
+$opt_p2  = $estimate_header[0]['EstimateTrnView']['additional_goods_price2'];
+$opt3    = $estimate_header[0]['EstimateTrnView']['additional_goods_nm3'];
+$opt_p3  = $estimate_header[0]['EstimateTrnView']['additional_goods_price3'];
 
-/* サブヘッダ */
-$html .= '<div>
-            <table border="0" cellspacing="0" cellpadding="0">
-               <tr>
-                  <td width="250" colspan="2" align="left">
-                                      <font size="14">'.$groom_nm.'</font>&nbsp;&nbsp;
-                                      <font size="14">'.$bride_nm.'</font>
-                 </td>
-                 <td width="140"></td>
-                 <td width="130" colspan="3" align="right"><img src="./images/title.png" border="0" width="109px" height="17px" /></td>
-              </tr>
-              <tr>
-                     <td width="250" colspan="2">&nbsp;</td>
-                     <td width="270" colspan="4" align="right">Tel 03-3746-0004 Fax 03-3746-0048</td>
-              </tr>
-              <tr>
-                     <td width="250" colspan="2" align="left">下記の通りご請求申し上げます。</td>
-                     <td width="140">&nbsp;</td>
-                     <td width="130" colspan="3" align="right">info@realweddings.jp</td>
-              </tr>
-              <tr>
-                    <td width="390" colspan="3">&nbsp;</td>
-                    <td width="130" colspan="3" align="right">〒106-0032</td>
-              </tr>
-              <tr>
-                    <td width="100" align="right" style="border-bottom:1px double black"><font size="10">ご請求金額</font></td>';
+//集計行の数を計算(振込先情報のセル結合に使用)
+$summary_row_cnt=2;
+if($is_discounted || !empty($opt1) || !empty($opt2) || !empty($opt3)){
+ $summary_row_cnt+=2;
+ if($discountA > 0){$summary_row_cnt++;}
+ if($discountB > 0){$summary_row_cnt++;}
+ if(!empty($opt1)){$summary_row_cnt++;}
+ if(!empty($opt2)){$summary_row_cnt++;}
+ if(!empty($opt3)){$summary_row_cnt++;}
+ if($credit_amount > 0){ $summary_row_cnt+=2; }
+}else{
+ $summary_row_cnt++;
+ if($credit_amount > 0){ $summary_row_cnt+=2; }
+}
 
-              if($is_discounted){
-              	$html .='<td width="290" colspan="2" align="center" style="border-bottom:1px dash black"><font size="14">￥'.number_format((($subtotal + $tax + $service)-$discountA-$discountB)- $credit_amount).'  (税込)</font></td>';
-              }else{
-	            $html .='<td width="290" colspan="2" align="center" style="border-bottom:1px dash black"><font size="14">￥'.number_format(($subtotal + $tax + $service) - $credit_amount).'  (税込)</font></td>';
-              }
+if(empty($estimate_header[0]['EstimateTrnView']['upd_dt'])){
+$d = date('Y年m月d日', strtotime($estimate_header[0]['EstimateTrnView']['reg_dt']));
+}else{
+$d = date('Y年m月d日', strtotime($estimate_header[0]['EstimateTrnView']['upd_dt']));
+}
 
-        $html .='<td width="130" colspan="3" align="right">東京都港区六本木7-15-10 5Ｆ</td>
-              </tr>
-           </table>
-        </div>
-        <div align="left">内訳</div>';
+//ステータスが仮約定以前の場合は挙式予定日を、それ以外は挙式日を表示する
+if($customer['CustomerMstView']['status_id'] < CS_CONTRACTING){
+  $wedding_dt = $common->evalSpaceForShortDateKanji($customer['CustomerMstView']['wedding_planned_dt']);
+}else{
+  $wedding_dt= $common->evalSpaceForShortDateKanji($customer['CustomerMstView']['wedding_dt']);
+}
 
-/* 明細 */
-$html.= '<div><table border="1" cellspacing="0" cellpadding="2">
-	        <tr align="center">
-	        <th width="100">項目</th>
-		    <th width="310">内容</th>
-		    <th width="50">単価</th>
-		    <th width="25">個数</th>
-		    <th width="55">計</th>
+if($customer['CustomerMstView']['status_id'] < CS_CONTRACTING){
+  $wedding_place= $customer['CustomerMstView']['wedding_planned_place'];
+}else{
+  $wedding_place= $customer['CustomerMstView']['wedding_place'];
+}
+
+if($customer['CustomerMstView']['status_id'] < CS_CONTRACTING){
+  $wedding_time= $common->evalSpaceForTimeKanji($customer['CustomerMstView']['wedding_planned_time']);
+}else{
+  $wedding_time= $common->evalSpaceForTimeKanji($customer['CustomerMstView']['wedding_time']);
+}
+
+$html = '<style>.border{ border:1px solid black;}</style>';
+
+$html .= '<div><table border="0">
+                 <tr>
+                     <td align="left" style="border-bottom:3px solid black"><img src="./images/title_wd.png" border="0" width="80px" height="34px" /></td>
+                 </tr>  
+                 <tr>
+                     <td style="border-bottom:1px solid black;height:1px">&nbsp;</td>
+                 </tr>               
+              </table>
+              <br />
+              <table border="0">
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td align="right">' .$d.'</td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td>&nbsp;</td>
+                  </tr>
+                   <tr>
+                     <td>&nbsp;</td>
+                     <td align="right">株式会社ミケランジェロ</td>
+                  </tr>
+                  <tr>
+                     <td align="left">
+                       <span style="text-decoration:underline">
+                          <font size="12">'.$groom_nm.'</font>&nbsp;&nbsp;
+                          <font size="12">'.$bride_nm.'</font>
+                       </span>
+                     </td>
+                     <td align="right">ホワイトドア</td>
+                  </tr>
+                  <tr>
+                     <td align="left">&nbsp;</td>
+                     <td align="right">TEL：03-5363-2442</td>
+                  </tr>
+                  <tr>
+                     <td align="left">&nbsp;</td>
+                     <td align="right">FAX：03-5363-1416</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" align="center"><font size="14"><strong>請求書</strong></font></td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" align="center">&nbsp;</td>
+                  </tr>
+                  <tr>
+                     <td colspan="2" align="left">このたびはホワイトドアをご利用いただき誠にありがとうございます。</td>
+                  </tr>
+                   <tr>
+                     <td colspan="2" align="left">ご依頼いただいております挙式につきまして、ご請求金額を下記のとおりご案内申し上げます。</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2">&nbsp;</td>
+                  </tr>
+                  <tr>';
+                  
+                       if($is_discounted){
+                    	 $html .='<td colspan="2" align="left"><font size="14" style="text-decoration:underline">合計請求金額：￥'.number_format((($subtotal + $tax + $service +$opt_p1 + $opt_p2 + $opt_p3)-$discountA-$discountB)- $credit_amount).'  (税込)</font></td>';
+                       }else{
+	                     $html .='<td colspan="2" align="left"><font size="14" style="text-decoration:underline">合計請求金額：￥'.number_format(($subtotal + $tax + $service +$opt_p1 + $opt_p2 + $opt_p3) - $credit_amount).'  (税込)</font></td>';
+                       }
+                 $html .='</tr>';
+      
+                 $html.='<tr><td colspan="2">&nbsp;</td></tr>
+                         <tr><td colspan="2" align="left">挙式日時：'.$wedding_dt.' '.$wedding_time.'</td></tr>
+                         <tr><td colspan="2" align="left">挙式場名：'.$wedding_place.'</td></tr>';
+
+$html.= '</table></div>';
+
+$html.= '<div><table border="0" cellspacing="0" cellpadding="2">
+	       <tr align="center">
+	        <th width="100" class="border">項目</th>
+		    <th width="310" class="border">内容</th>
+		    <th width="50"  class="border">単価</th>
+		    <th width="25"  class="border">数量</th>
+		    <th width="55"  class="border">金額</th>
 	      </tr>';
 
-     /* 同じ商品コードは１つの注文に束ねる  */
+    /* 同じ商品コードは１つの注文に束ねる  */
     for($main=0;$main < count($estimate_dtl);$main++)
     {
     	for($sub=$main+1;$sub < count($estimate_dtl);$sub++)
@@ -136,16 +200,16 @@ $html.= '<div><table border="1" cellspacing="0" cellpadding="2">
         	   //同じ商品コード
         	   if($estimate_dtl[$main]['EstimateDtlTrnView']['goods_cd'] == $estimate_dtl[$sub]['EstimateDtlTrnView']['goods_cd'] ){
 
-        	   	//商品カテゴリがTransportation(Guest)又はReceptionTransportationの場合のみ集約
-        	   	if($estimate_dtl[$main]['EstimateDtlTrnView']['goods_ctg_id'] == GC_TRANS_GST ||
-        	   	   $estimate_dtl[$main]['EstimateDtlTrnView']['goods_ctg_id'] == GC_RECEPTION_TRANS ){
-        	       //個数を追加
-        	       $estimate_dtl[$main]['EstimateDtlTrnView']['num'] += $estimate_dtl[$sub]['EstimateDtlTrnView']['num'];
-        	       //一致した商品の片方は見積対象外とする
-        	       $estimate_dtl[$sub]['EstimateDtlTrnView']['del_kbn'] = true;
-        	  	}
-        	  }
-           }
+        	     //商品カテゴリがTransportation(Guest)又はReceptionTransportationの場合のみ集約
+        	     if($estimate_dtl[$main]['EstimateDtlTrnView']['goods_ctg_id'] == GC_TRANS_GST ||
+        	   	    $estimate_dtl[$main]['EstimateDtlTrnView']['goods_ctg_id'] == GC_RECEPTION_TRANS ){
+        	   	    //個数を追加
+        	   	    $estimate_dtl[$main]['EstimateDtlTrnView']['num'] += $estimate_dtl[$sub]['EstimateDtlTrnView']['num'];
+        	   	    //一致した商品の片方は見積対象外とする
+        	   	    $estimate_dtl[$sub]['EstimateDtlTrnView']['del_kbn'] = true;
+        	     }
+        	   }
+        	}
         }
     }
 
@@ -153,64 +217,68 @@ $html.= '<div><table border="1" cellspacing="0" cellpadding="2">
     for($i=0;$i < count($estimate_dtl);$i++)
     {
        if($estimate_dtl[$i]['EstimateDtlTrnView']['del_kbn']==false){
-         $html .= '<tr><td>'                    . $estimate_dtl[$i]['EstimateDtlTrnView']['goods_ctg_nm']            . '</td>'.
-                      '<td>'                    . '【'. $estimate_dtl[$i]['EstimateDtlTrnView']['goods_kbn_nm'].'】'.'<br />&nbsp;&nbsp;'.str_replace ("\n", "<br />&nbsp;&nbsp;", $estimate_dtl[$i]['EstimateDtlTrnView']['sales_goods_nm']).'</td>'.
-                      '<td align="right">￥'    . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price']). '</td>'.
-                      '<td align="right">'      . (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']                 . '</td>'.
-                      '<td align="right">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'] * (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']) . '</td></tr>';
-      }
+         $html .= '<tr><td class="border">'                 . $estimate_dtl[$i]['EstimateDtlTrnView']['goods_ctg_nm']            . '</td>'.
+                      '<td class="border">'                 . '【'. $estimate_dtl[$i]['EstimateDtlTrnView']['goods_kbn_nm'].'】'.'<br />&nbsp;&nbsp;'.str_replace ("\n", "<br />&nbsp;&nbsp;", $estimate_dtl[$i]['EstimateDtlTrnView']['sales_goods_nm']).'</td>'.
+                      '<td align="right" class="border">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'])        . '</td>'.
+                      '<td align="right" class="border">'   . (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']                       . '</td>'.
+                      '<td align="right" class="border">￥' . number_format($estimate_dtl[$i]['EstimateDtlTrnView']['yen_price'] * (int)$estimate_dtl[$i]['EstimateDtlTrnView']['num']) . '</td></tr>';
+       }
     }
 
-$html .= '<tr><td colspan="4" align="right">小計</td><td align="right">￥' . number_format($subtotal) . '</td></tr>' .
-         '<tr><td colspan="4" align="right">ハワイ州税</td><td align="right">￥'. number_format($tax) .'</td></tr>' .
-         '<tr><td colspan="4" align="right">'.$estimate_dtl[0]['EstimateDtlTrnView']['service_rate_nm'].'</td><td align="right">￥'. number_format($service) .'</td></tr>';
-
-          //割引有の請求書フォーマットで計算
-          if($is_discounted){
-
-          	$html .=  '<tr><td colspan="4" align="right">小計</td><td align="right">￥'. number_format($subtotal + $tax + $service) .'</td></tr>' ;
-          	//割引率が適用されている
-          	if($discountA > 0){
-          		$html .= '<tr><td colspan="4" align="right">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_rate_nm'] .'['. $discount_rate .'%]</td><td align="right">(￥' .number_format($discountA) . ')</td></tr>';
+         //小計は表示しない
+         //'<tr><td colspan="4" align="right" class="border">小計</td><td align="right" class="border">￥' . number_format($subtotal) . '</td></tr>' .
+$html .= '<tr><td colspan="2" rowspan="'.$summary_row_cnt.'" class="border">              
+              <p>'.substr($invoice_deadline,0,4).'年'.substr($invoice_deadline,4,2).'月'.substr($invoice_deadline,6,2).'日までに下記お振込先へご入金をお願い申し上げます。</p>
+              <p>■振込先  <br />
+                 みずほ銀行　神谷町支店（１４６）　普通預金　８０５２３８１  <br />
+                 ■口座名義  <br />
+                 株式会社ミケランジェロ　『 カ）ミケランジェロ 』</p>
+              <p>※恐れ入りますが、お振込手数料はご負担願います。</p> 
+              
+             </td><td colspan="2" align="right" class="border">ハワイ州税</td><td align="right" class="border">￥'. number_format($tax) .'</td></tr>' .
+         '<tr><td colspan="2" align="right" class="border">'.$estimate_dtl[0]['EstimateDtlTrnView']['service_rate_nm'].'</td><td align="right" class="border">￥'. number_format($service) .'</td></tr>';
+  
+         //割引率又は割引額、追加商品が適用されている場合は小計を表示する
+         if($is_discounted || !empty($opt1) || !empty($opt2) || !empty($opt3)){
+         	$html .= '<tr><td colspan="2" align="right" class="border">小計</td><td align="right" class="border">￥' . number_format($subtotal + $tax +$service) . '</td></tr>';
+         	//割引率が適用されている
+         	if($discountA > 0){
+         		$html .= '<tr><td colspan="2" align="right" class="border">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_rate_nm'] .'['. $discount_rate .'%]</td><td align="right" class="border">(￥' .number_format($discountA) . ')</td></tr>';
+         	}
+         	//割引額が適用されている
+         	if($discountB > 0){
+         		$html .='<tr><td colspan="2" align="right" class="border">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_nm'].'</td><td align="right" class="border">(￥' .number_format($discountB) . ')</td></tr>' ;
+         	}
+         	//追加商品が適用されている
+         	if(!empty($opt1)){ $html .= '<tr><td colspan="2" align="right" class="border">'.$opt1.'</td><td align="right" class="border">￥' . number_format($opt_p1) . '</td></tr>';}
+            if(!empty($opt2)){ $html .= '<tr><td colspan="2" align="right" class="border">'.$opt2.'</td><td align="right" class="border">￥' . number_format($opt_p2) . '</td></tr>';}
+            if(!empty($opt3)){ $html .= '<tr><td colspan="2" align="right" class="border">'.$opt3.'</td><td align="right" class="border">￥' . number_format($opt_p3) . '</td></tr>';}
+            
+         	$html .= '<tr><td colspan="2" align="right" class="border">合計</td><td align="right" class="border">￥' . number_format(($subtotal + $tax +$service + $opt_p1 + $opt_p2 + $opt_p3)-$discountA-$discountB) . '</td></tr>';
+            if($credit_amount > 0){
+          		$html .= '<tr><td colspan="2" align="right" class="border">ご入金金額</td><td align="right" class="border">(￥' . number_format($credit_amount) . ')</td></tr>'.
+          		         '<tr><td colspan="2" align="right" class="border">ご請求金額合計</td><td align="right" class="border">￥' . number_format((($subtotal + $tax + $service + $opt_p1 + $opt_p2 + $opt_p3)-$discountA-$discountB)- $credit_amount) . '</td></tr>' ;
           	}
-          	//割引額が適用されている
-          	if($discountB > 0){
-          		$html .='<tr><td colspan="4" align="right">'.$estimate_dtl[0]['EstimateDtlTrnView']['discount_nm'].'</td><td align="right">(￥' .number_format($discountB) . ')</td></tr>' ;
+
+         }else{
+         	$html .= '<tr><td colspan="2" align="right" class="border">合計</td><td align="right" class="border">￥' . number_format($subtotal + $tax +$service) . '</td></tr>';
+         	if($credit_amount > 0){
+          		$html .= '<tr><td colspan="2" align="right" class="border">ご入金金額</td><td align="right" class="border">(￥' . number_format($credit_amount) . ')</td></tr>'.
+            	         '<tr><td colspan="2" align="right" class="border">ご請求金額合計</td><td align="right" class="border">￥' . number_format(($subtotal + $tax + $service) - $credit_amount) . '</td></tr>';
           	}
-          	$html .='<tr><td colspan="4" align="right">合計</td><td align="right">￥' . number_format(($subtotal + $tax + $service)-$discountA-$discountB) . '</td></tr>' ;
-          	if($credit_amount > 0){
-          		$html .= '<tr><td colspan="4" align="right">ご入金金額</td><td align="right">(￥' . number_format($credit_amount) . ')</td></tr>'.
-          		         '<tr><td colspan="4" align="right">合計</td><td align="right">￥' . number_format((($subtotal + $tax + $service)-$discountA-$discountB)- $credit_amount) . '</td></tr>' ;
-          	}
+         }     
+         
 
-          //割引無の請求書フォーマットで計算
-          }else{
-
-          	$html .= '<tr><td colspan="4" align="right">合計</td><td align="right">￥'. number_format($subtotal + $tax + $service) .'</td></tr>' ;
-          	if($credit_amount > 0){
-          		$html .= '<tr><td colspan="4" align="right">ご入金金額</td><td align="right">(￥' . number_format($credit_amount) . ')</td></tr>'.
-            	         '<tr><td colspan="4" align="right">ご請求金額合計</td><td align="right">￥' . number_format(($subtotal + $tax + $service) - $credit_amount) . '</td></tr>';
-          	}
-          }
-
-$html .= '</table></div>';
-
-/* 補足説明 */
-$html .= '<div style="border:1px solid black;">
-               <table border="0" color="black">
-                 <tr align="center"><td>&nbsp;</td></tr>
-                 <tr align="center"><td><font size="12">'.substr($invoice_deadline,0,4).'年'.substr($invoice_deadline,4,2).'月'.substr($invoice_deadline,6,2).'日までに下記口座へお振り込みください。</font></td></tr>
-                 <tr align="center"><td><font size="12">三井住友銀行　六本木支店　普通7348176　エンプレス株式会社</font></td></tr>
-                 <tr align="center"><td><font size="12">＊恐れ入りますが、お振込み手数料はお客様でご負担下さい。</font></td></tr>
-               </table>
-          </div>';
+$html .=  '</table></div>';
 
 /* フッター */
-$html .= '<div bgcolor="#CCFFCC" color="black" align="center">
-              www.realweddings.jp
+/*
+$html .= '<div>
+               <table border="0" bgcolor="pink">
+                 <tr align="center"><td><font size="10">www.realweddings.jp</font></td></tr>
+               </table>
           </div>';
-
-
+*/
 $obj->writeHTML($html, true, 0, true, 0);
 
 //改行

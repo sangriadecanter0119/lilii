@@ -2006,10 +2006,10 @@ JSPROG
         <th class="dollar">総原価<?php echo $html->image('dollar.png')?></th>
         <th class="dollar">利益<?php echo $html->image('dollar.png')?></th>
         <th class="dollar short">利益率<?php echo $html->image('dollar.png')?></th>
-        <th class="dollar">HI<?php echo $html->image('dollar.png')?></th>
-        <th class="dollar">RW<?php echo $html->image('dollar.png')?></th>
-        <th>HI/SH</th>
-        <th>RW/SH</th>
+        <th class="dollar">LC<?php echo $html->image('dollar.png')?></th>
+        <th class="dollar">WD<?php echo $html->image('dollar.png')?></th>
+        <th>LC/SH</th>
+        <th>WD/SH</th>
         <th>販売為替レート</th>
 	    <th>原価為替レート</th>
         <th>支払区分</th>
@@ -2482,6 +2482,107 @@ echo         "</select>".
             <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
+         <!-- 追加衣装代など SATRT -->
+          <tr class="nodrag nodrop">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td align="right"><input type="text" id="additional_goods1"  class="" name="data[EstimateTrn][additional_goods_nm1]" value="" /></td>
+            <td><input type="text" id="additional_goods_nm1" class="inputnumeric" name="data[EstimateTrn][additional_goods_price1]" value="" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+
+            <td class="yen short" id="total_additional_goods_price1" >&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen" id="total_aw_with_additional1">&nbsp;</td>
+            <td class="yen" id="total_rw_with_additional1">&nbsp;</td>
+
+            <td class="dolla" id="total_amount_foreign_price_with_additonal1" >&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar" id="total_foreign_aw_with_additional1">&nbsp;</td>
+            <td class="dollar" id="total_foreign_rw_with_additional1">&nbsp;</td>
+
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+         <tr class="nodrag nodrop">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td align="right"><input type="text" id="additional_goods2"  class="" name="data[EstimateTrn][additional_goods_nm2]" value="" /></td>
+            <td><input type="text" id="additional_goods_nm2" class="inputnumeric" name="data[EstimateTrn][additional_goods_price2]" value="" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+
+            <td class="yen short" id="total_additional_goods_price2" >&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen" id="total_aw_with_additional2">&nbsp;</td>
+            <td class="yen" id="total_rw_with_additional2">&nbsp;</td>
+
+            <td class="dolla" id="total_amount_foreign_price_with_additonal2" >&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar" id="total_foreign_aw_with_additional2">&nbsp;</td>
+            <td class="dollar" id="total_foreign_rw_with_additional2">&nbsp;</td>
+
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+         <tr class="nodrag nodrop">
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td align="right"><input type="text" id="additional_goods3"  class="" name="data[EstimateTrn][additional_goods_nm3]" value="" /></td>
+            <td><input type="text" id="additional_goods_nm3" class="inputnumeric" name="data[EstimateTrn][additional_goods_price3]" value="" /></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+
+            <td class="yen short" id="total_additional_goods_price3" >&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen short">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen">&nbsp;</td>
+            <td class="yen" id="total_aw_with_additional3">&nbsp;</td>
+            <td class="yen" id="total_rw_with_additional3">&nbsp;</td>
+
+            <td class="dolla" id="total_amount_foreign_price_with_additonal3" >&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar">&nbsp;</td>
+            <td class="dollar short">&nbsp;</td>
+            <td class="dollar" id="total_foreign_aw_with_additional3">&nbsp;</td>
+            <td class="dollar" id="total_foreign_rw_with_additional3">&nbsp;</td>
+
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <!-- 追加衣装代など END -->
         <tr class="nodrag nodrop">
             <td>&nbsp;</td>
             <td>&nbsp;</td>

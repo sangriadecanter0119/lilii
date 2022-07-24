@@ -419,12 +419,12 @@ JSPROG
              </td>
           </tr>
           <tr>
-             <th>HIシェア(%)</th>
+             <th>LCシェア(%)</th>
              <td><input type="text" name="data[GoodsMst][aw_share]" id="aw_share" class="validate[required,custom[number],max[100],maxSize[5],rateSumUp[rw_share]] inputnumeric"
                         value="<?php echo $data['LatestGoodsMstView']['aw_share'] *100 ?>" /></td>
           </tr>
           <tr>
-             <th>RWシェア(%)</th>
+             <th>WDシェア(%)</th>
              <td><input type="text" name="data[GoodsMst][rw_share]" id="rw_share" class="validate[required,custom[number],max[100],maxSize[5],rateSumUp[aw_share]] inputnumeric"
                         value="<?php echo $data['LatestGoodsMstView']['rw_share'] *100 ?>" /></td>
           </tr>

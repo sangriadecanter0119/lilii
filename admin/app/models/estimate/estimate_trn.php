@@ -175,7 +175,7 @@ class EstimateTrn extends AppModel {
 
   /**
    *
-   * 見積ヘッダの送金為替レートを更新する
+   * 見積ヘッダの注意事項を更新する
    * @param $estimate_data
    * @param $estimate_id
    * @param $user_name
@@ -187,7 +187,7 @@ class EstimateTrn extends AppModel {
   	$est_fields = array('pdf_note');
   	$this->id = $estimate_id;
   	if($this->save(array('pdf_note'=>$pdf_note),false,$est_fields)==false){
-  		return array('result'=>false,'message'=>"見積ヘッダの送金為替レート更新に失敗しました。",'reason'=>$this->getDbo()->error."[".date('Y-m-d H:i:s')."]");
+  		return array('result'=>false,'message'=>"見積ヘッダの注意事項の更新に失敗しました。",'reason'=>$this->getDbo()->error."[".date('Y-m-d H:i:s')."]");
   	}
   	return array('result'=>true);
   }

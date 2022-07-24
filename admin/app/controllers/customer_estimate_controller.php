@@ -259,7 +259,7 @@ class CustomerEstimateController extends AppController
   * 現在の見積もりは残して、新規見積を作成する(更新の度に履歴を残す)
   */
  function editEstimate($estimate_id=null)
- {
+ {   
  	$customer_id = $this->Session->read('customer_id');
 
     if(!empty($this->data))
@@ -269,8 +269,8 @@ class CustomerEstimateController extends AppController
 
 	    $this->layout = '';
  	    $this->autoRender =false;
- 	    configure::write('debug', 0);
-
+ 	  //  configure::write('debug', 0);
+ 	    
  	    //率を小数点に戻す
  		$this->data['EstimateTrn']['hawaii_tax_rate'] =  $this->data['EstimateTrn']['hawaii_tax_rate'] / 100;
  		$this->data['EstimateTrn']['discount_rate']   =  $this->data['EstimateTrn']['discount_rate'] / 100;
@@ -557,7 +557,7 @@ class CustomerEstimateController extends AppController
  	//AJAX CALLのみ処理する
     if (!$this->RequestHandler->isAjax()){ 	$this->cakeError("error404");  }
 
-    configure::write('debug', 0);
+  //  configure::write('debug', 0);
 	$this->layout = '';
     $data = null;
     $renderName =null;
@@ -579,32 +579,45 @@ class CustomerEstimateController extends AppController
  	    /* 商品区分IDの商品リストをJSONデータで取得する */
  		case "GOODS_LIST":
  			    $this->autoRender =false;
- 			    $data = $this->GoodsMstView->find('all',array('conditions'=>
+ 			    
+ 			   /* $data = $this->GoodsMstView->find('all',array('conditions'=>
  			    		                                array('goods_kbn_id'=>$id,'year'=>GOODS_YEAR,'non_display_flg'=>DISPLAY,
  			    		                                	  'start_valid_dt <='=>date('Y-m-d'),'end_valid_dt >='=>date('Y-m-d'),'del_kbn'=>EXISTS),
- 			    		                       'order'=>array('goods_cd','revision desc')));
+ 			    		                       'order'=>array('goods_cd','revision desc')));*/
+ 			    
+ 			  	//商品履歴での表示はやめて、最新改定の商品のみ表示	                                  
+ 			    $query = "SELECT T1.* FROM `goods_mst_views` T1 ".
+                                     "WHERE T1.goods_kbn_id =".$id.
+                                     " AND T1.year =".GOODS_YEAR.
+                                     " AND T1.non_display_flg =".DISPLAY.
+                                     " AND T1.start_valid_dt <='".date('Y-m-d')."' AND T1.end_valid_dt >='".date('Y-m-d')."'".
+                                     " AND T1.del_kbn =".EXISTS.
+                                     " AND T1.revision = (SELECT MAX(revision) FROM goods_mst_views WHERE goods_cd = T1.goods_cd) ".
+                                  "ORDER BY T1.goods_cd;";
+ 			    $data = $this->GoodsMstView->query($query);
+ 			    
 
  			    $current_goods_cd = "";
  			    $dummy_key = "";
  	            $comps = array();
  	            for($i=0;$i < count($data);$i++){
 
- 	              if(empty($current_goods_cd) || $current_goods_cd != $data[$i]['GoodsMstView']['goods_cd']){
- 	            		$current_goods_cd = $data[$i]['GoodsMstView']['goods_cd'];
- 	            		$dummy_key = $data[$i]['GoodsMstView']['goods_cd']."    ".$data[$i]['GoodsMstView']['goods_nm'];
+ 	              if(empty($current_goods_cd) || $current_goods_cd != $data[$i]['T1']['goods_cd']){
+ 	            		$current_goods_cd = $data[$i]['T1']['goods_cd'];
+ 	            		$dummy_key = $data[$i]['T1']['goods_cd']."    ".$data[$i]['T1']['goods_nm'];
  	              }
 
- 	 	          $sign = $data[$i]['GoodsMstView']['currency_kbn'] == FOREIGN ? "$" : "￥";
- 	  	          array_push($comps, array("id" => $data[$i]['GoodsMstView']['id'], "cell" => array($dummy_key,
- 	  	                                                                                  $data[$i]['GoodsMstView']['goods_cd'],
- 	  	                                                                                  $data[$i]['GoodsMstView']['goods_nm'],
- 	  	                                                                                  $data[$i]['GoodsMstView']['revision'],
-                                                                                          $data[$i]['GoodsMstView']['price'] == null ? $sign."0" : $sign.$data[$i]['GoodsMstView']['price'],
-                                                                                          $data[$i]['GoodsMstView']['cost']  == null ? $sign."0" : $sign.$data[$i]['GoodsMstView']['cost'],
-                                                                                          $data[$i]['GoodsMstView']['vendor_nm'])
+ 	 	          $sign = $data[$i]['T1']['currency_kbn'] == FOREIGN ? "$" : "￥";
+ 	  	          array_push($comps, array("id" => $data[$i]['T1']['id'], "cell" => array($dummy_key,
+ 	  	                                                                                  $data[$i]['T1']['goods_cd'],
+ 	  	                                                                                  $data[$i]['T1']['goods_nm'],
+ 	  	                                                                                  $data[$i]['T1']['revision'],
+                                                                                          $data[$i]['T1']['price'] == null ? $sign."0" : $sign.$data[$i]['T1']['price'],
+                                                                                          $data[$i]['T1']['cost']  == null ? $sign."0" : $sign.$data[$i]['T1']['cost'],
+                                                                                          $data[$i]['T1']['vendor_nm'])
                                   )
                    );
- 	            }
+ 	            } 	         
                 return json_encode(array('rows' => $comps));
          /* 見積テンプレートリストをJSONデータで取得する */
  		case "TEMPLATE_LIST":
@@ -738,7 +751,8 @@ class CustomerEstimateController extends AppController
  function export($file_type,$estimate_id,$credit_amount = 0,$invoice_deadline=null,$pdf_note=null){
 
   if(strtoupper($file_type) == "ESTIMATE_YEN" || strtoupper($file_type) == "ESTIMATE_DOLLAR"){
-  	 $this->EstimateTrn->updatePdfNote($estimate_id,empty($pdf_note) ? "" : $pdf_note);
+     //改行コードが消えてします問題が解決しないので一旦コメントアウトしておく
+  	 //$this->EstimateTrn->updatePdfNote($estimate_id,empty($pdf_note) ? "" : $pdf_note);
   }
 
    $customer_id = $this->Session->read('customer_id');
